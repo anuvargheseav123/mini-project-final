@@ -290,7 +290,7 @@
 
     function setCurrentUser(userData) {
       try {
-        localStorage.setItem('currentUser', JSON.stringify(userData));
+        sessionStorage.setItem('currentUser', JSON.stringify(userData));
         return true;
       } catch (error) {
         console.error('Error saving user data:', error);
@@ -300,13 +300,16 @@
 
     function getCurrentUser() {
       try {
-        const userData = localStorage.getItem('currentUser');
+        const userData = sessionStorage.getItem('currentUser');
         return userData ? JSON.parse(userData) : null;
       } catch (error) {
         console.error('Error loading user data:', error);
         return null;
       }
     }
+
+    // Import Supabase
+    import { auth } from './src/lib/supabase.js';
 
     function handleCampsAccess() {
       showMessage('🔐 Please login first to access relief camps information.', 'error');
@@ -317,21 +320,38 @@
     }
 
     // Check if user is already logged in
-    document.addEventListener('DOMContentLoaded', () => {
-      const currentUser = getCurrentUser();
-      if (currentUser) {
-        showMessage(`Welcome back, ${currentUser.name}!`, 'success');
-        setTimeout(() => {
-          if (currentUser.role === 'volunteer') {
-            window.location.href = 'dashboard.html';
-          } else {
-            window.location.href = 'camps.html';
-          }
-        }, 1500);
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const { data, error } = await auth.getCurrentUser();
+        if (data && data.profile) {
+          const userData = {
+            id: data.user.id,
+            email: data.profile.email,
+            name: data.profile.name,
+            role: data.profile.role,
+            contact: data.profile.contact,
+            address: data.profile.address,
+            needs: data.profile.needs,
+            skills: data.profile.skills,
+            availability: data.profile.availability
+          };
+          
+          setCurrentUser(userData);
+          showMessage(`Welcome back, ${userData.name}!`, 'success');
+          setTimeout(() => {
+            if (userData.role === 'volunteer') {
+              window.location.href = 'dashboard.html';
+            } else {
+              window.location.href = 'camps.html';
+            }
+          }, 1500);
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
       }
     });
 
-    document.getElementById('loginForm').addEventListener('submit', (e) => {
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const loginBtn = document.getElementById('loginBtn');
@@ -348,14 +368,21 @@
         return;
       }
 
-      // Simulate authentication delay
-      setTimeout(() => {
+      try {
+        const { data, error } = await auth.signIn(formData.email, formData.password);
+        
+        if (error) throw error;
+        
         const userData = {
-          name: formData.email.includes('volunteer') ? 'Volunteer User' : 'User',
-          email: formData.email,
-          role: formData.email.includes('volunteer') ? 'volunteer' : 'refugee',
-          contact: '123-456-7890',
-          loginTime: new Date().toISOString()
+          id: data.user.id,
+          email: data.profile.email,
+          name: data.profile.name,
+          role: data.profile.role,
+          contact: data.profile.contact,
+          address: data.profile.address,
+          needs: data.profile.needs,
+          skills: data.profile.skills,
+          availability: data.profile.availability
         };
 
         setCurrentUser(userData);
@@ -368,7 +395,12 @@
             window.location.href = 'camps.html';
           }
         }, 1000);
-      }, 1000);
+      } catch (error) {
+        console.error('Login error:', error);
+        showMessage('❌ Login failed: ' + error.message, 'error');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login';
+      }
     });
 
     // Reset button state if user navigates back
@@ -380,5 +412,6 @@
       }
     });
   </script>
+  <script type="module" src="/src/lib/supabase.js"></script>
 </body>
 </html>
