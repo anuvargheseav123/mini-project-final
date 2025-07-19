@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Volunteer Dashboard - Flood Rehabilitation Project</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      color: #334155;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      color: #1e293b;
+      padding: 1rem 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    }
+    .nav-bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-bar h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 0;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: transform 0.3s ease;
+    }
+    .nav-bar h1:hover {
+      transform: scale(1.02);
+    }
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav-link {
+      color: #64748b;
+      text-decoration: none;
+      padding: 0.75rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      position: relative;
+    }
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    .nav-link:hover::before,
+    .nav-link.active::before {
+      width: 80%;
+    }
+    .nav-link:hover,
+    .nav-link.active {
+      color: #3b82f6;
+      background-color: rgba(59, 130, 246, 0.05);
+    }
+    .nav-btn {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border: none;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-left: 1rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+    }
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    }
+    .user-info {
+      color: #475569;
+      font-size: 0.9rem;
+      margin-right: 1rem;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+      border-radius: 20px;
+      border: 1px solid rgba(226, 232, 240, 0.5);
+    }
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+    }
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    }
+    /* Main Content */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    /* Dashboard Header */
+    .dashboard-header {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
+      color: #1e293b;
+      padding: 3rem 2rem;
+      text-align: center;
+      border-radius: 20px;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out;
+    }
+    .dashboard-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+    .dashboard-header-content {
+      position: relative;
+      z-index: 1;
+    }
+    .dashboard-header h1 {
+      font-size: 2.5rem;
+      margin: 0;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    /* Access Denied */
+    .access-denied {
+      text-align: center;
+      padding: 3rem;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 2px solid #ef4444;
+      border-radius: 20px;
+      margin: 2rem 0;
+      box-shadow: 0 20px 40px rgba(239, 68, 68, 0.1);
+    }
+    .access-denied h2 {
+      color: #dc2626;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .access-denied p {
+      color: #64748b;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+    /* Content Sections */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    .content-grid.single {
+      grid-template-columns: 1fr;
+    }
+    .section {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+    .section:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    .section h2, .section h3 {
+      color: #1e293b;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .welcome {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      margin-bottom: 3rem;
+      animation: fadeInUp 0.8s ease-out 0.1s both;
+    }
+    .welcome h2 {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .welcome p {
+      color: #64748b;
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+    /* Camp Items */
+    .camp-item {
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .camp-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    .camp-item:hover::before {
+      transform: scaleX(1);
+    }
+    .camp-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+    .camp-item.new-camp {
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      border: 2px solid #10b981;
+      animation: newCampPulse 2s ease-in-out;
+    }
+    @keyframes newCampPulse {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+      }
+      50% {
+        transform: scale(1.02);
+        box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+      }
+    }
+    .camp-info {
+      flex: 1;
+      min-width: 250px;
+    }
+    .camp-info h4 {
+      margin: 0 0 0.75rem 0;
+      color: #1e293b;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .camp-info p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      color: #64748b;
+      line-height: 1.6;
+    }
+    /* Forms */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      color: #374151;
+      font-size: 1rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      background: rgba(248, 250, 252, 0.5);
+      backdrop-filter: blur(10px);
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+    }
+    input::placeholder, textarea::placeholder {
+      color: #9ca3af;
+    }
+    /* Buttons */
+    .btn {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    .btn:hover::before {
+      left: 100%;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+    .btn:disabled {
+      background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .btn-full {
+      width: 100%;
+      margin-top: 1.5rem;
+      padding: 1rem;
+      font-size: 1.1rem;
+    }
+    .btn-secondary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    .btn-secondary:hover {
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+    .btn-danger:hover {
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+    }
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.9);
+      color: #3b82f6;
+      border: 2px solid #3b82f6;
+      backdrop-filter: blur(10px);
+    }
+    .btn-outline:hover {
+      background: #3b82f6;
+      color: white;
+    }
+    /* Radio Groups */
+    .radio-group {
+      margin: 1.5rem 0;
+    }
+    .radio-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: rgba(248, 250, 252, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid #e2e8f0;
+    }
+    .radio-item:hover {
+      background: rgba(255, 255, 255, 0.9);
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+    }
+    .radio-item input[type="radio"] {
+      width: auto;
+      margin-right: 1rem;
+      transform: scale(1.2);
+    }
+    .radio-item label {
+      margin: 0;
+      cursor: pointer;
+      flex: 1;
+      font-weight: 500;
+      color: #1e293b;
+    }
+    /* Messages */
+    .message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+      z-index: 1000;
+      max-width: 350px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(20px);
+      animation: slideInRight 0.5s ease-out;
+    }
+    .message.success {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+    .message.error {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    /* Loading */
+    .loading {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    /* Utility Classes */
+    .text-center {
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (max-width: 768px) {
+      .nav-bar {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+        padding: 1rem;
+      }
+      .nav-links {
+        justify-content: center;
+        width: 100%;
+      }
+      .container {
+        padding: 1rem;
+      }
+      .dashboard-header {
+        padding: 2rem 1.5rem;
+      }
+      .dashboard-header h1 {
+        font-size: 2rem;
+      }
+      .section, .welcome {
+        padding: 2rem;
+      }
+      .camp-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.5rem;
+      }
+      .camp-info {
+        min-width: 100%;
+        margin-bottom: 1rem;
+      }
+      .back-btn {
+        position: static;
+        display: inline-block;
+        margin-bottom: 1rem;
+      }
+      .content-grid {
+        gap: 1.5rem;
+      }
+    }
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-btn">← Back to Home</a>
+  <header class="header">
+    <nav class="nav-bar">
+      <div class="logo">
+        <h1 onclick="window.location.href='index.html'">🌊 Flood Rehabilitation Project</h1>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">Home</a>
+        <span id="userInfo" class="user-info" style="display: none;"></span>
+        <a href="camps.html" class="nav-link">Relief Camps</a>
+        <a href="dashboard.html" class="nav-link active">Dashboard</a>
+        <a href="login.html" class="nav-link" id="loginLink">Login</a>
+        <button class="nav-btn" onclick="logout()" id="logoutBtn" style="display: none;">Logout</button>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div id="accessDenied" class="access-denied" style="display: none;">
+      <h2>🚫 Access Denied</h2>
+      <p>This dashboard is only accessible to volunteers. Please login as a volunteer or go back to the home page.</p>
+      <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="login.html" class="btn">🔐 Login as Volunteer</a>
+        <a href="index.html" class="btn btn-secondary">🏠 Go to Home</a>
+      </div>
+    </div>
+
+    <div id="dashboardContent">
+      <div class="dashboard-header">
+        <div class="dashboard-header-content">
+          <h1>📊 Volunteer Dashboard</h1>
+        </div>
+      </div>
+
+      <section class="welcome">
+        <h2>Welcome, <span id="volunteerName">Volunteer Name</span>! 👋</h2>
+        <p>Manage relief camps, coordinate volunteer efforts, and make a real difference in our community's recovery. Your contributions are essential to helping those affected by the floods.</p>
+      </section>
+
+      <div class="content-grid">
+        <section class="section" id="campsSection">
+          <h3>🏕️ Available Relief Camps</h3>
+          <div id="campList">
+            <!-- Camps will be dynamically inserted here -->
+          </div>
+        </section>
+
+        <section class="section">
+          <form id="addCampForm">
+            <h3>➕ Add New Relief Camp</h3>
+            <div class="form-group">
+              <label for="campName">🏷️ Camp Name:</label>
+              <input type="text" id="campName" required placeholder="Enter camp name" />
+            </div>
+            <div class="form-group">
+              <label for="campBeds">🛏️ Number of Beds Available:</label>
+              <input type="number" id="campBeds" min="0" required placeholder="Enter number of beds" />
+            </div>
+            <div class="form-group">
+              <label for="campResources">📦 Available Resources (comma separated):</label>
+              <textarea id="campResources" rows="3" placeholder="Food, Water, Medical Aid, Blankets, Clothing..."></textarea>
+            </div>
+            <div class="form-group">
+              <label for="campContact">📞 Emergency Contact:</label>
+              <input type="tel" id="campContact" placeholder="Enter emergency contact number" />
+            </div>
+            <div class="form-group">
+              <label for="campAmbulance">🚑 Ambulance Available:</label>
+              <select id="campAmbulance">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+                <option value="Nearby">Nearby Hospital</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-full" id="addCampBtn">🚀 Add Camp</button>
+          </form>
+        </section>
+      </div>
+
+      <div class="content-grid single">
+        <section class="section text-center">
+          <form id="volunteerAssignmentForm">
+            <h3>🤝 Select Camp to Volunteer</h3>
+            <p style="color: #64748b; margin-bottom: 1.5rem;">Choose a relief camp where you'd like to volunteer your time and skills.</p>
+            <div id="volunteerCampOptions" class="radio-group">
+              <!-- Radio buttons for camps will appear here -->
+            </div>
+            <button type="submit" class="btn" id="volunteerBtn">✅ Confirm Volunteering</button>
+          </form>
+        </section>
+      </div>
+
+      <div class="content-grid single">
+        <section class="section">
+          <h3>📋 Your Volunteer History</h3>
+          <p style="color: #64748b; margin-bottom: 1.5rem;">Track your volunteer contributions and see the impact you've made in the community.</p>
+          <div id="volunteerHistory">
+            <!-- Volunteer history will be displayed here -->
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let lastAddedCampId = null;
+
+    function showMessage(message, type = 'success') {
+      const existingMessages = document.querySelectorAll('.message');
+      existingMessages.forEach(msg => msg.remove());
+
+      const messageEl = document.createElement('div');
+      messageEl.className = `message ${type}`;
+      messageEl.textContent = message;
+      document.body.appendChild(messageEl);
+      
+      setTimeout(() => {
+        if (messageEl.parentNode) {
+          messageEl.remove();
+        }
+      }, 5000);
+    }
+
+    function getFormData(form) {
+      const formData = new FormData(form);
+      const data = {};
+      for (let [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+      return data;
+    }
+
+    function validateForm(data, requiredFields) {
+      const errors = [];
+      requiredFields.forEach(field => {
+        if (!data[field] || data[field].trim() === '') {
+          errors.push(`${field} is required`);
+        }
+      });
+      return errors;
+    }
+
+    function getCurrentUser() {
+      try {
+        const userData = localStorage.getItem('currentUser');
+        return userData ? JSON.parse(userData) : null;
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        return null;
+      }
+    }
+
+    function clearCurrentUser() {
+      try {
+        localStorage.removeItem('currentUser');
+        updateNavigation();
+        return true;
+      } catch (error) {
+        console.error('Error clearing user data:', error);
+        return false;
+      }
+    }
+
+    function updateNavigation() {
+      const currentUser = getCurrentUser();
+      const userInfo = document.getElementById('userInfo');
+      const loginLink = document.getElementById('loginLink');
+      const logoutBtn = document.getElementById('logoutBtn');
+
+      if (currentUser) {
+        userInfo.textContent = `👋 Welcome, ${currentUser.name}`;
+        userInfo.style.display = 'inline-block';
+        loginLink.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+      } else {
+        userInfo.style.display = 'none';
+        loginLink.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+      }
+    }
+
+    function initializeCamps() {
+      const existingCamps = localStorage.getItem('camps');
+      if (!existingCamps) {
+        // Initialize with default camps if none exist
+        const defaultCamps = [
+          {
+            id: 1,
+            name: "Central School Grounds",
+            beds: 24,
+            resources: ["Food", "Water", "Medical Aid", "Blankets"],
+            contact: "+91 98765 43210",
+            ambulance: "Yes",
+            type: "default"
+          },
+          {
+            id: 2,
+            name: "Community Hall",
+            beds: 12,
+            resources: ["Food", "Water", "Blankets", "Clothing"],
+            contact: "+91 98765 11223",
+            ambulance: "Nearby",
+            type: "default"
+          },
+          {
+            id: 3,
+            name: "Government High School",
+            beds: 30,
+            resources: ["Food", "Water", "First Aid", "Hygiene Kits"],
+            contact: "+91 98765 77889",
+            ambulance: "Yes",
+            type: "default"
+          }
+        ];
+        localStorage.setItem('camps', JSON.stringify(defaultCamps));
+      }
+    }
+
+    function getCamps() {
+      try {
+        initializeCamps();
+        const camps = localStorage.getItem('camps');
+        return camps ? JSON.parse(camps) : [];
+      } catch (error) {
+        console.error('Error loading camps:', error);
+        return [];
+      }
+    }
+
+    function saveCamps(camps) {
+      try {
+        localStorage.setItem('camps', JSON.stringify(camps));
+        // Trigger storage event for other tabs/windows
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: 'camps',
+          newValue: JSON.stringify(camps)
+        }));
+        return true;
+      } catch (error) {
+        console.error('Error saving camps:', error);
+        return false;
+      }
+    }
+
+    function getVolunteerAssignments() {
+      try {
+        const assignments = localStorage.getItem('volunteerAssignments');
+        return assignments ? JSON.parse(assignments) : [];
+      } catch (error) {
+        console.error('Error loading volunteer assignments:', error);
+        return [];
+      }
+    }
+
+    function saveVolunteerAssignment(volunteerName, campName) {
+      try {
+        const assignments = getVolunteerAssignments();
+        const newAssignment = {
+          id: assignments.length + 1,
+          volunteer: volunteerName,
+          camp: campName,
+          date: new Date().toISOString()
+        };
+        assignments.push(newAssignment);
+        localStorage.setItem('volunteerAssignments', JSON.stringify(assignments));
+        return true;
+      } catch (error) {
+        console.error('Error saving volunteer assignment:', error);
+        return false;
+      }
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        clearCurrentUser();
+        showMessage('✅ Logged out successfully!', 'success');
+        setTimeout(() => window.location.href = 'index.html', 1500);
+      }
+    }
+
+    function checkAccess() {
+      const currentUser = getCurrentUser();
+      const accessDenied = document.getElementById('accessDenied');
+      const dashboardContent = document.getElementById('dashboardContent');
+      
+      if (!currentUser) {
+        accessDenied.style.display = 'block';
+        dashboardContent.style.display = 'none';
+        showMessage('🔐 Please login to access the dashboard.', 'error');
+        return false;
+      } else if (currentUser.role !== 'volunteer') {
+        accessDenied.style.display = 'block';
+        dashboardContent.style.display = 'none';
+        showMessage('🚫 Access denied. This dashboard is for volunteers only.', 'error');
+        setTimeout(() => {
+          if (currentUser.role === 'refugee') {
+            window.location.href = 'camps.html';
+          }
+        }, 3000);
+        return false;
+      } else {
+        accessDenied.style.display = 'none';
+        dashboardContent.style.display = 'block';
+        return true;
+      }
+    }
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNavigation();
+      
+      if (!checkAccess()) {
+        return;
+      }
+
+      const currentUser = getCurrentUser();
+      document.getElementById('volunteerName').textContent = currentUser.name;
+      
+      showMessage(`✨ Welcome to your dashboard, ${currentUser.name}!`, 'success');
+      
+      // Initialize dashboard
+      loadCamps();
+      loadVolunteerHistory();
+    });
+
+    // Load and manage camps
+    let camps = getCamps();
+
+    function loadCamps() {
+      camps = getCamps();
+      renderCamps();
+    }
+
+    function renderCamps() {
+      const campListEl = document.getElementById('campList');
+      const volunteerCampOptionsEl = document.getElementById('volunteerCampOptions');
+      
+      if (!campListEl || !volunteerCampOptionsEl) return;
+      
+      campListEl.innerHTML = '';
+      volunteerCampOptionsEl.innerHTML = '';
+
+      if (camps.length === 0) {
+        campListEl.innerHTML = '<p style="color: #64748b; font-size: 1.1rem; text-align: center; padding: 2rem; background: rgba(248, 250, 252, 0.5); border-radius: 12px;">No camps available. Add a new camp to get started! 🏕️</p>';
+        volunteerCampOptionsEl.innerHTML = '<p style="color: #64748b; font-size: 1.1rem; text-align: center; padding: 2rem;">No camps available for volunteering.</p>';
+        return;
+      }
+
+      camps.forEach(camp => {
+        // Camp card for display
+        const campDiv = document.createElement('div');
+        campDiv.className = 'camp-item';
+        campDiv.id = `camp-${camp.id}`;
+        
+        // Highlight newly added camp
+        if (lastAddedCampId === camp.id) {
+          campDiv.classList.add('new-camp');
+          setTimeout(() => {
+            campDiv.classList.remove('new-camp');
+            lastAddedCampId = null;
+          }, 2000);
+        }
+        
+        campDiv.innerHTML = `
+          <div class="camp-info">
+            <h4>🏕️ ${camp.name}</h4>
+            <p><strong>🛏️ Beds Available:</strong> ${camp.beds}</p>
+            <p><strong>📦 Resources:</strong> ${camp.resources.join(', ')}</p>
+            ${camp.contact ? `<p><strong>📞 Contact:</strong> ${camp.contact}</p>` : ''}
+            ${camp.ambulance ? `<p><strong>🚑 Ambulance:</strong> ${camp.ambulance}</p>` : ''}
+            ${camp.addedBy ? `<p><strong>👤 Added by:</strong> ${camp.addedBy}</p>` : ''}
+            ${camp.addedDate ? `<p><strong>📅 Added:</strong> ${new Date(camp.addedDate).toLocaleDateString()}</p>` : ''}
+          </div>
+          ${camp.type !== 'default' ? `<button class="btn btn-danger" onclick="deleteCamp(${camp.id})">🗑️ Remove</button>` : ''}
+        `;
+        campListEl.appendChild(campDiv);
+
+        // Radio button option
+        const radioOption = document.createElement('div');
+        radioOption.className = 'radio-item';
+        radioOption.innerHTML = `
+          <input type="radio" id="radio${camp.id}" name="selectedCamp" value="${camp.id}" required />
+          <label for="radio${camp.id}">🏕️ ${camp.name} (${camp.beds} beds available)</label>
+        `;
+        volunteerCampOptionsEl.appendChild(radioOption);
+      });
+    }
+
+    function deleteCamp(campId) {
+      if (confirm('Are you sure you want to remove this camp? This action cannot be undone.')) {
+        camps = camps.filter(camp => camp.id !== campId);
+        saveCamps(camps);
+        renderCamps();
+        showMessage('✅ Camp removed successfully! Changes will be reflected on the camps page.', 'success');
+      }
+    }
+
+    function scrollToNewCamp(campId) {
+      setTimeout(() => {
+        const campElement = document.getElementById(`camp-${campId}`);
+        if (campElement) {
+          campElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+      }, 100);
+    }
+
+    // Add camp form
+    document.getElementById('addCampForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const addBtn = document.getElementById('addCampBtn');
+      addBtn.disabled = true;
+      addBtn.innerHTML = '<span class="loading"></span>Adding Camp...';
+
+      const formData = getFormData(e.target);
+      const errors = validateForm(formData, ['campName', 'campBeds']);
+      
+      if (errors.length > 0) {
+        showMessage('❌ Please fill in all required fields: ' + errors.join(', '), 'error');
+        addBtn.disabled = false;
+        addBtn.textContent = '🚀 Add Camp';
+        return;
+      }
+
+      const beds = parseInt(formData.campBeds);
+      if (isNaN(beds) || beds < 0) {
+        showMessage('❌ Please enter a valid number of beds.', 'error');
+        addBtn.disabled = false;
+        addBtn.textContent = '🚀 Add Camp';
+        return;
+      }
+
+      const resources = formData.campResources
+        .split(',')
+        .map(r => r.trim())
+        .filter(r => r.length > 0);
+
+      const newCamp = {
+        id: camps.length ? Math.max(...camps.map(c => c.id)) + 1 : 1,
+        name: formData.campName,
+        beds: beds,
+        resources: resources.length > 0 ? resources : ['Basic supplies'],
+        contact: formData.campContact || '',
+        ambulance: formData.campAmbulance || 'No',
+        addedBy: document.getElementById('volunteerName').textContent,
+        addedDate: new Date().toISOString(),
+        type: 'volunteer-added'
+      };
+
+      lastAddedCampId = newCamp.id;
+      camps.push(newCamp);
+      
+      if (saveCamps(camps)) {
+        renderCamps();
+        scrollToNewCamp(newCamp.id);
+        e.target.reset();
+        showMessage(`✅ Camp "${newCamp.name}" added successfully! It will now appear on the camps page.`, 'success');
+        
+        setTimeout(() => {
+          document.getElementById('campsSection').scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }, 500);
+      } else {
+        showMessage('❌ Failed to add camp. Please try again.', 'error');
+        lastAddedCampId = null;
+      }
+
+      addBtn.disabled = false;
+      addBtn.textContent = '🚀 Add Camp';
+    });
+
+    // Volunteer assignment form
+    document.getElementById('volunteerAssignmentForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const volunteerBtn = document.getElementById('volunteerBtn');
+      volunteerBtn.disabled = true;
+      volunteerBtn.innerHTML = '<span class="loading"></span>Confirming...';
+
+      const selectedCampId = document.querySelector('input[name="selectedCamp"]:checked')?.value;
+      
+      if (!selectedCampId) {
+        showMessage('❌ Please select a camp to volunteer at.', 'error');
+        volunteerBtn.disabled = false;
+        volunteerBtn.textContent = '✅ Confirm Volunteering';
+        return;
+      }
+
+      const camp = camps.find(c => c.id == selectedCampId);
+      const volunteerName = document.getElementById('volunteerName').textContent;
+      
+      if (saveVolunteerAssignment(volunteerName, camp.name)) {
+        showMessage(`🎉 Thank you, ${volunteerName}, for volunteering at "${camp.name}"!`, 'success');
+        loadVolunteerHistory();
+        document.querySelector('input[name="selectedCamp"]:checked').checked = false;
+      } else {
+        showMessage('❌ Failed to save volunteer assignment. Please try again.', 'error');
+      }
+
+      volunteerBtn.disabled = false;
+      volunteerBtn.textContent = '✅ Confirm Volunteering';
+    });
+
+    function loadVolunteerHistory() {
+      const historyEl = document.getElementById('volunteerHistory');
+      const assignments = getVolunteerAssignments();
+      const volunteerName = document.getElementById('volunteerName').textContent;
+      
+      const userAssignments = assignments.filter(a => a.volunteer === volunteerName);
+      
+      if (userAssignments.length === 0) {
+        historyEl.innerHTML = '<p style="color: #64748b; font-size: 1.1rem; text-align: center; padding: 2rem; background: rgba(248, 250, 252, 0.5); border-radius: 12px;">No volunteer history yet. Select a camp above to start volunteering! 🤝</p>';
+        return;
+      }
+
+      historyEl.innerHTML = userAssignments
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .map(assignment => `
+          <div class="camp-item">
+            <div class="camp-info">
+              <h4>🏕️ ${assignment.camp}</h4>
+              <p><strong>📅 Volunteer Date:</strong> ${new Date(assignment.date).toLocaleDateString()}</p>
+              <p><strong>⏰ Time:</strong> ${new Date(assignment.date).toLocaleTimeString()}</p>
+            </div>
+          </div>
+        `).join('');
+    }
+
+    // Listen for storage changes from other tabs/windows
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'camps') {
+        loadCamps();
+        console.log('🔄 Camps updated from another tab');
+      }
+    });
+
+    // Auto-refresh camps every 2 minutes
+    setInterval(() => {
+      if (getCurrentUser() && getCurrentUser().role === 'volunteer') {
+        loadCamps();
+        console.log('🔄 Auto-refreshing camp data...');
+      }
+    }, 120000);
+  </script>
+</body>
+</html>

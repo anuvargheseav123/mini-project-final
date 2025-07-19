@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Flood Rehabilitation Project</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e3f2fd, #ffffff);
+      color: #1565c0;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .nav-bar {
+      background-color: #1976d2;
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .nav-bar h1 {
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    .nav-link:hover,
+    .nav-link.active {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    .nav-btn {
+      background: none;
+      border: 1px solid white;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .nav-btn:hover {
+      background-color: white;
+      color: #1976d2;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+    .login-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      padding: 2rem;
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .login-header h1 {
+      color: #1976d2;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    .login-header p {
+      color: #666;
+      font-size: 0.95rem;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #1976d2;
+    }
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    input:focus {
+      outline: none;
+      border-color: #1976d2;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+    }
+    .btn {
+      width: 100%;
+      padding: 0.75rem;
+      background-color: #1976d2;
+      color: white;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin-bottom: 1rem;
+    }
+    .btn:hover {
+      background-color: #1565c0;
+    }
+    .btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .text-center {
+      text-align: center;
+    }
+    .text-center a {
+      color: #1976d2;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    .text-center a:hover {
+      color: #1565c0;
+      text-decoration: underline;
+    }
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background-color: #00695c;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background-color 0.3s ease;
+      z-index: 100;
+    }
+    .back-btn:hover {
+      background-color: #004d40;
+    }
+    .message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 6px;
+      color: white;
+      font-weight: bold;
+      z-index: 1000;
+      animation: slideIn 0.3s ease;
+    }
+    .message.success {
+      background-color: #43a047;
+    }
+    .message.error {
+      background-color: #d32f2f;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    @media (max-width: 768px) {
+      .nav-bar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+      }
+      .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .login-container {
+        padding: 1.5rem;
+      }
+      .login-header h1 {
+        font-size: 1.5rem;
+      }
+      .back-btn {
+        position: static;
+        display: inline-block;
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-btn">← Back to Home</a>
+  
+  <nav class="nav-bar">
+    <h1 onclick="window.location.href='index.html'">Flood Rehabilitation Project</h1>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Home</a>
+      <a href="login.html" class="nav-link active">Login</a>
+      <a href="#" class="nav-link" onclick="handleCampsAccess()">View Camps</a>
+      <a href="dashboard.html" class="nav-link">Dashboard</a>
+      <a href="index.html" class="nav-btn">Sign Up</a>
+    </div>
+  </nav>
+
+  <div class="main-content">
+    <div class="login-container">
+      <div class="login-header">
+        <h1>Login</h1>
+        <p>Enter your credentials to access the flood rehabilitation platform</p>
+      </div>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required />
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required />
+        </div>
+        
+        <button type="submit" class="btn" id="loginBtn">Login</button>
+      </form>
+      <div class="text-center">
+        <p>Don't have an account? <a href="index.html">Sign up here</a></p>
+        <p><a href="#" onclick="handleCampsAccessFromLogin()">Need to access camps?</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showMessage(message, type = 'success') {
+      const existingMessages = document.querySelectorAll('.message');
+      existingMessages.forEach(msg => msg.remove());
+      
+      const messageEl = document.createElement('div');
+      messageEl.className = `message ${type}`;
+      messageEl.textContent = message;
+      document.body.appendChild(messageEl);
+      
+      setTimeout(() => {
+        if (messageEl.parentNode) {
+          messageEl.remove();
+        }
+      }, 3000);
+    }
+
+    function getFormData(form) {
+      const formData = new FormData(form);
+      const data = {};
+      for (let [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+      return data;
+    }
+
+    function validateForm(data, requiredFields) {
+      const errors = [];
+      requiredFields.forEach(field => {
+        if (!data[field] || data[field].trim() === '') {
+          errors.push(`${field} is required`);
+        }
+      });
+      return errors;
+    }
+
+    function setCurrentUser(userData) {
+      try {
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        return true;
+      } catch (error) {
+        console.error('Error saving user data:', error);
+        return false;
+      }
+    }
+
+    function getCurrentUser() {
+      try {
+        const userData = localStorage.getItem('currentUser');
+        return userData ? JSON.parse(userData) : null;
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        return null;
+      }
+    }
+
+    function handleCampsAccess() {
+      showMessage('🔐 Please login first to access relief camps information.', 'error');
+    }
+
+    function handleCampsAccessFromLogin() {
+      showMessage('🔐 Please complete login to access relief camps.', 'error');
+    }
+
+    // Check if user is already logged in
+    document.addEventListener('DOMContentLoaded', () => {
+      const currentUser = getCurrentUser();
+      if (currentUser) {
+        showMessage(`Welcome back, ${currentUser.name}!`, 'success');
+        setTimeout(() => {
+          if (currentUser.role === 'volunteer') {
+            window.location.href = 'dashboard.html';
+          } else {
+            window.location.href = 'camps.html';
+          }
+        }, 1500);
+      }
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const loginBtn = document.getElementById('loginBtn');
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Logging in...';
+      
+      const formData = getFormData(e.target);
+      const errors = validateForm(formData, ['email', 'password']);
+      
+      if (errors.length > 0) {
+        showMessage(errors.join(', '), 'error');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login';
+        return;
+      }
+
+      // Simulate authentication delay
+      setTimeout(() => {
+        const userData = {
+          name: formData.email.includes('volunteer') ? 'Volunteer User' : 'User',
+          email: formData.email,
+          role: formData.email.includes('volunteer') ? 'volunteer' : 'refugee',
+          contact: '123-456-7890',
+          loginTime: new Date().toISOString()
+        };
+
+        setCurrentUser(userData);
+        showMessage('Login successful!', 'success');
+        
+        setTimeout(() => {
+          if (userData.role === 'volunteer') {
+            window.location.href = 'dashboard.html';
+          } else {
+            window.location.href = 'camps.html';
+          }
+        }, 1000);
+      }, 1000);
+    });
+
+    // Reset button state if user navigates back
+    window.addEventListener('pageshow', () => {
+      const loginBtn = document.getElementById('loginBtn');
+      if (loginBtn) {
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Login';
+      }
+    });
+  </script>
+</body>
+</html>

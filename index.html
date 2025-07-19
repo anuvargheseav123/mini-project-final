@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flood Rehabilitation Project - Emergency Relief Services</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      color: #334155;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      color: #1e293b;
+      padding: 1rem 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    }
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav-bar h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 0;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      transition: transform 0.3s ease;
+    }
+    .nav-bar h1:hover {
+      transform: scale(1.02);
+    }
+    .nav-links {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav-link {
+      color: #64748b;
+      text-decoration: none;
+      padding: 0.75rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      position: relative;
+    }
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      transition: all 0.3s ease;
+      transform: translateX(-50%);
+    }
+    .nav-link:hover::before,
+    .nav-link.active::before {
+      width: 80%;
+    }
+    .nav-link:hover,
+    .nav-link.active {
+      color: #3b82f6;
+      background-color: rgba(59, 130, 246, 0.05);
+    }
+    .nav-btn {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border: none;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-left: 1rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2);
+    }
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    }
+    .user-info {
+      color: #475569;
+      font-size: 0.9rem;
+      margin-right: 1rem;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, #f1f5f9, #e2e8f0);
+      border-radius: 20px;
+      border: 1px solid rgba(226, 232, 240, 0.5);
+    }
+    /* Main Content */
+    .main-content {
+      padding: 0;
+    }
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
+      color: #1e293b;
+      text-align: center;
+      padding: 5rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="%23ffffff" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="%23ffffff" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+      opacity: 0.3;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    .hero h2 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 0.8s ease-out;
+    }
+    .hero p {
+      font-size: 1.3rem;
+      max-width: 600px;
+      margin: 0 auto 2.5rem auto;
+      opacity: 0.8;
+      animation: fadeInUp 0.8s ease-out 0.2s both;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    /* Content Sections */
+    .content-section {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 4rem 2rem;
+      margin: 2rem 0;
+      border-radius: 20px;
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    }
+    .content-section.white {
+      background: rgba(255, 255, 255, 0.9);
+    }
+    .content-section h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 1.5rem;
+      text-align: center;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .content-section p {
+      font-size: 1.1rem;
+      color: #475569;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto 3rem auto;
+      line-height: 1.7;
+    }
+    /* Info Cards */
+    .info-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+    .info-card {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      padding: 2.5rem;
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .info-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    .info-card:hover::before {
+      transform: scaleX(1);
+    }
+    .info-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      border-color: rgba(59, 130, 246, 0.2);
+    }
+    .info-card h3 {
+      color: #3b82f6;
+      margin-bottom: 1.5rem;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+    .info-card p {
+      color: #64748b;
+      line-height: 1.7;
+      text-align: left;
+      margin: 0;
+    }
+    /* Buttons */
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: 2.5rem;
+      animation: fadeInUp 0.8s ease-out 0.4s both;
+    }
+    .btn {
+      text-decoration: none;
+      padding: 1rem 2.5rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      min-width: 160px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    .btn:hover::before {
+      left: 100%;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+    .btn-secondary {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: white;
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+    }
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.9);
+      color: #3b82f6;
+      border: 2px solid #3b82f6;
+      backdrop-filter: blur(10px);
+    }
+    .btn-outline:hover {
+      background: #3b82f6;
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+    }
+    /* Forms */
+    .signup-section {
+      max-width: 650px;
+      margin: 2rem auto;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    }
+    .role-selection {
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+    }
+    .role-selection h2 {
+      margin-bottom: 1rem;
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .role-selection p {
+      color: #64748b;
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+    .role-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 0;
+    }
+    .role-buttons button {
+      padding: 1rem 2rem;
+      background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+      color: #475569;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-width: 180px;
+      position: relative;
+      overflow: hidden;
+    }
+    .role-buttons button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      transition: left 0.3s ease;
+      z-index: -1;
+    }
+    .role-buttons button:hover::before {
+      left: 0;
+    }
+    .role-buttons button:hover {
+      color: white;
+      border-color: #3b82f6;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+    }
+    .role-buttons button.active {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      border-color: #3b82f6;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+    }
+    .form-section {
+      margin-top: 2rem;
+    }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      color: #374151;
+      font-size: 1rem;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      background: rgba(248, 250, 252, 0.5);
+      backdrop-filter: blur(10px);
+    }
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateY(-1px);
+    }
+    input::placeholder, textarea::placeholder {
+      color: #9ca3af;
+    }
+    .password-field {
+      position: relative;
+    }
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 0.25rem;
+      transition: color 0.3s ease;
+    }
+    .password-toggle:hover {
+      color: #3b82f6;
+    }
+    button[type="submit"] {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-top: 1.5rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+    button[type="submit"]::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s ease;
+    }
+    button[type="submit"]:hover::before {
+      left: 100%;
+    }
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+    }
+    button[type="submit"]:disabled {
+      background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    /* Utility Classes */
+    .hidden {
+      display: none;
+    }
+    .text-center {
+      text-align: center;
+    }
+    .mt-2 {
+      margin-top: 2rem;
+    }
+    /* Messages */
+    .message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      color: white;
+      font-weight: 600;
+      z-index: 1000;
+      max-width: 350px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(20px);
+      animation: slideInRight 0.5s ease-out;
+    }
+    .message.success {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+    .message.error {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    /* Loading */
+    .loading {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+      margin-right: 8px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    /* Footer */
+    .footer {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: white;
+      padding: 4rem 0 2rem 0;
+      margin-top: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="footerGrain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="%23ffffff" opacity="0.05"/><circle cx="75" cy="75" r="1" fill="%23ffffff" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23footerGrain)"/></svg>');
+    }
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 3rem;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 1;
+    }
+    .footer-section h3 {
+      margin-bottom: 1.5rem;
+      color: white;
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .footer-section p, .footer-section a {
+      color: #cbd5e1;
+      text-decoration: none;
+      line-height: 1.8;
+      transition: color 0.3s ease;
+    }
+    .footer-section a:hover {
+      color: #93c5fd;
+    }
+    .footer-bottom {
+      border-top: 1px solid rgba(203, 213, 225, 0.2);
+      padding-top: 2rem;
+      text-align: center;
+      color: #94a3b8;
+      position: relative;
+      z-index: 1;
+    }
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .nav-bar {
+        flex-direction: column;
+        text-align: center;
+        gap: 1.5rem;
+      }
+      .nav-links {
+        justify-content: center;
+        width: 100%;
+      }
+      .hero {
+        padding: 3rem 1.5rem;
+      }
+      .hero h2 {
+        font-size: 2.2rem;
+      }
+      .hero p {
+        font-size: 1.1rem;
+      }
+      .cta-buttons, .role-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+      .btn {
+        width: 100%;
+        max-width: 300px;
+      }
+      .signup-section {
+        margin: 1rem;
+        padding: 2rem;
+      }
+      .info-cards {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .content-section {
+        padding: 3rem 1.5rem;
+        margin: 1rem 0;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    /* Print Styles */
+    @media print {
+      .nav-btn, .cta-buttons, .signup-section {
+        display: none;
+      }
+      .hero {
+        background: #f8fafc !important;
+        color: #1e293b !important;
+      }
+      body {
+        background: white !important;
+      }
+    }
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="nav-bar">
+        <div class="logo">
+          <h1 onclick="window.location.href='index.html'">🌊 Flood Rehabilitation Project</h1>
+        </div>
+        <div class="nav-links">
+          <a href="index.html" class="nav-link active">Home</a>
+          <span id="userInfo" class="user-info hidden"></span>
+          <a href="#" class="nav-link" id="campsLink" onclick="handleCampsAccess()">Relief Camps</a>
+          <a href="dashboard.html" class="nav-link" id="dashboardLink">Dashboard</a>
+          <a href="login.html" class="nav-link" id="loginLink">Login</a>
+          <button class="nav-btn" onclick="showSignup()" id="signupBtn">Register</button>
+          <button class="nav-btn" onclick="logout()" id="logoutBtn" style="display: none;">Logout</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section id="landingSection">
+      <div class="hero">
+        <div class="container">
+          <div class="hero-content">
+            <h2>🤝 Emergency Flood Relief & Rehabilitation Services</h2>
+            <p>Coordinating community support and resources for comprehensive flood recovery efforts</p>
+            <div class="cta-buttons" id="ctaButtons">
+              <a href="login.html" class="btn btn-primary">🔐 Access Portal</a>
+              <button class="btn btn-outline" onclick="showSignup()">✨ Register for Services</button>
+            </div>
+            <div class="cta-buttons hidden" id="loggedInButtons">
+              <button class="btn btn-secondary" onclick="handleCampsAccess()">🏕️ View Relief Camps</button>
+              <a href="dashboard.html" class="btn btn-primary" id="dashboardBtnLoggedIn">📊 Access Dashboard</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <section class="content-section">
+          <h2>🌟 Our Services</h2>
+          <p>
+            We provide comprehensive flood relief services including emergency shelter coordination, 
+            volunteer management, and resource distribution to support affected communities during recovery.
+          </p>
+          <div class="info-cards">
+            <div class="info-card">
+              <h3>🆘 Emergency Assistance</h3>
+              <p>If you have been affected by flooding and require immediate assistance, register to access available relief camps, emergency shelter, and essential resources. Our team is here to help you through this difficult time.</p>
+            </div>
+            <div class="info-card">
+              <h3>🤝 Volunteer Services</h3>
+              <p>Join our volunteer network to help coordinate relief efforts, manage emergency shelters, and provide support to community members in need. Make a difference in your community's recovery.</p>
+            </div>
+            <div class="info-card">
+              <h3>🏕️ Relief Camps</h3>
+              <p>Access comprehensive information about available relief camps including capacity, available resources, medical facilities, and essential supplies for flood victims and their families.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section id="signupSection" class="content-section white hidden">
+      <div class="container">
+        <div class="signup-section">
+          <div class="role-selection">
+            <h2>🎯 Service Registration</h2>
+            <p>Please select the type of service you require to get started:</p>
+            <div class="role-buttons">
+              <button id="refugeeBtn" class="active" type="button">🆘 Request Assistance</button>
+              <button id="volunteerBtn" type="button">🤝 Volunteer Services</button>
+            </div>
+          </div>
+          <div class="form-section">
+            <form id="refugeeForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="rname">👤 Full Name *</label>
+                  <input type="text" id="rname" name="name" required placeholder="Enter your full name" />
+                </div>
+                <div class="form-group">
+                  <label for="rage">🎂 Age *</label>
+                  <input type="number" id="rage" name="age" required min="1" max="120" placeholder="Enter your age" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="remail">📧 Email Address *</label>
+                  <input type="email" id="remail" name="email" required placeholder="Enter your email address" />
+                </div>
+                <div class="form-group">
+                  <label for="rcontact">📞 Contact Number *</label>
+                  <input type="tel" id="rcontact" name="contact" required placeholder="Enter your phone number" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="rpassword">🔒 Password *</label>
+                <div class="password-field">
+                  <input type="password" id="rpassword" name="password" required placeholder="Create a secure password" minlength="6" />
+                  <button type="button" class="password-toggle" onclick="togglePassword('rpassword')">👁️ Show</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="raddress">📍 Current Location / Address *</label>
+                <textarea id="raddress" name="address" rows="3" required placeholder="Provide your current location or address"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="rneeds">📝 Assistance Required *</label>
+                <textarea id="rneeds" name="needs" rows="4" required placeholder="Please describe the type of assistance you need"></textarea>
+              </div>
+              <button type="submit">🚀 Submit Registration</button>
+            </form>
+
+            <form id="volunteerForm" class="hidden">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="vname">👤 Full Name *</label>
+                  <input type="text" id="vname" name="name" required placeholder="Enter your full name" />
+                </div>
+                <div class="form-group">
+                  <label for="vage">🎂 Age *</label>
+                  <input type="number" id="vage" name="age" required min="18" max="80" placeholder="Enter your age (18+)" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="vemail">📧 Email Address *</label>
+                  <input type="email" id="vemail" name="email" required placeholder="Enter your email address" />
+                </div>
+                <div class="form-group">
+                  <label for="vcontact">📞 Contact Number *</label>
+                  <input type="tel" id="vcontact" name="contact" required placeholder="Enter your phone number" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="vpassword">🔒 Password *</label>
+                <div class="password-field">
+                  <input type="password" id="vpassword" name="password" required placeholder="Create a secure password" minlength="6" />
+                  <button type="button" class="password-toggle" onclick="togglePassword('vpassword')">👁️ Show</button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="vskills">🛠️ Skills and Experience *</label>
+                <textarea id="vskills" name="skills" rows="3" required placeholder="Describe your relevant skills and experience"></textarea>
+              </div>
+              <div class="form-group">
+                <label for="vavailability">⏰ Availability *</label>
+                <textarea id="vavailability" name="availability" rows="3" required placeholder="Please specify your availability (days, hours, duration)"></textarea>
+              </div>
+              <button type="submit">🚀 Submit Volunteer Application</button>
+            </form>
+            <div class="text-center mt-2">
+              <button class="btn btn-outline" onclick="showLanding()">← Return to Home</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>📞 Contact Information</h3>
+          <p>Emergency Hotline: 1-800-FLOOD-HELP</p>
+          <p>Email: relief@floodrehab.org</p>
+          <p>Address: Emergency Operations Center</p>
+          <p>Available 24/7 for emergency assistance</p>
+        </div>
+        <div class="footer-section">
+          <h3>🔗 Quick Links</h3>
+          <p><a href="#" onclick="handleCampsAccess()">Relief Camps</a></p>
+          <p><a href="login.html">Portal Access</a></p>
+          <p><a href="#" onclick="showSignup()">Register</a></p>
+          <p><a href="#">Emergency Procedures</a></p>
+        </div>
+        <div class="footer-section">
+          <h3>📚 Resources</h3>
+          <p><a href="#">Safety Guidelines</a></p>
+          <p><a href="#">Recovery Resources</a></p>
+          <p><a href="#">Community Support</a></p>
+          <p><a href="#">Volunteer Handbook</a></p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Flood Rehabilitation Project. All rights reserved. | Emergency Relief Services</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Utility functions
+    function showMessage(message, type = 'success') {
+      const existingMessages = document.querySelectorAll('.message');
+      existingMessages.forEach(msg => msg.remove());
+      
+      const messageEl = document.createElement('div');
+      messageEl.className = `message ${type}`;
+      messageEl.textContent = message;
+      document.body.appendChild(messageEl);
+      
+      setTimeout(() => {
+        if (messageEl.parentNode) {
+          messageEl.remove();
+        }
+      }, 5000);
+    }
+
+    function getFormData(form) {
+      const formData = new FormData(form);
+      const data = {};
+      for (let [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+      return data;
+    }
+
+    function validateForm(data, requiredFields) {
+      const errors = [];
+      requiredFields.forEach(field => {
+        if (!data[field] || data[field].trim() === '') {
+          errors.push(`${field} is required`);
+        }
+      });
+      
+      // Email validation
+      if (data.email && !isValidEmail(data.email)) {
+        errors.push('Please enter a valid email address');
+      }
+      
+      // Password validation
+      if (data.password && data.password.length < 6) {
+        errors.push('Password must be at least 6 characters long');
+      }
+      
+      return errors;
+    }
+
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    function togglePassword(fieldId) {
+      const field = document.getElementById(fieldId);
+      const toggle = field.nextElementSibling;
+      
+      if (field.type === 'password') {
+        field.type = 'text';
+        toggle.textContent = '🙈 Hide';
+      } else {
+        field.type = 'password';
+        toggle.textContent = '👁️ Show';
+      }
+    }
+
+    function setCurrentUser(userData) {
+      try {
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+        updateNavigation();
+        return true;
+      } catch (error) {
+        console.error('Error saving user data:', error);
+        return false;
+      }
+    }
+
+    function getCurrentUser() {
+      try {
+        const userData = localStorage.getItem('currentUser');
+        return userData ? JSON.parse(userData) : null;
+      } catch (error) {
+        console.error('Error loading user data:', error);
+        return null;
+      }
+    }
+
+    function clearCurrentUser() {
+      try {
+        localStorage.removeItem('currentUser');
+        updateNavigation();
+        return true;
+      } catch (error) {
+        console.error('Error clearing user data:', error);
+        return false;
+      }
+    }
+
+    function handleCampsAccess() {
+      const currentUser = getCurrentUser();
+      if (!currentUser) {
+        showMessage('🔐 Please login or register to access relief camps information.', 'error');
+        setTimeout(() => {
+          if (confirm('You need to be logged in to view relief camps. Would you like to login now?')) {
+            window.location.href = 'login.html';
+          } else if (confirm('Or would you like to register for our services?')) {
+            showSignup();
+          }
+        }, 1000);
+        return;
+      }
+      // User is logged in, redirect to camps
+      window.location.href = 'camps.html';
+    }
+
+    function updateNavigation() {
+      const currentUser = getCurrentUser();
+      const userInfo = document.getElementById('userInfo');
+      const loginLink = document.getElementById('loginLink');
+      const signupBtn = document.getElementById('signupBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const campsLink = document.getElementById('campsLink');
+      const dashboardLink = document.getElementById('dashboardLink');
+      const dashboardBtnLoggedIn = document.getElementById('dashboardBtnLoggedIn');
+      const ctaButtons = document.getElementById('ctaButtons');
+      const loggedInButtons = document.getElementById('loggedInButtons');
+
+      if (currentUser) {
+        userInfo.textContent = `👋 Welcome, ${currentUser.name}`;
+        userInfo.classList.remove('hidden');
+        loginLink.style.display = 'none';
+        signupBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        
+        if (ctaButtons && loggedInButtons) {
+          ctaButtons.classList.add('hidden');
+          loggedInButtons.classList.remove('hidden');
+        }
+
+        // Update camps link to be clickable
+        campsLink.style.cursor = 'pointer';
+        campsLink.style.opacity = '1';
+
+        if (currentUser.role === 'volunteer') {
+          dashboardLink.style.display = 'inline-block';
+          if (dashboardBtnLoggedIn) dashboardBtnLoggedIn.style.display = 'inline-block';
+        } else if (currentUser.role === 'refugee') {
+          dashboardLink.style.display = 'none';
+          if (dashboardBtnLoggedIn) dashboardBtnLoggedIn.style.display = 'none';
+        }
+      } else {
+        userInfo.classList.add('hidden');
+        loginLink.style.display = 'inline-block';
+        signupBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+        dashboardLink.style.display = 'inline-block';
+        
+        if (ctaButtons && loggedInButtons) {
+          ctaButtons.classList.remove('hidden');
+          loggedInButtons.classList.add('hidden');
+        }
+
+        // Update camps link styling for non-logged users
+        campsLink.style.cursor = 'pointer';
+        campsLink.style.opacity = '0.7';
+      }
+    }
+
+    function logout() {
+      if (confirm('Are you sure you want to logout?')) {
+        clearCurrentUser();
+        showMessage('✅ Successfully logged out!', 'success');
+        showLanding();
+      }
+    }
+
+    function showSignup() {
+      document.getElementById('landingSection').classList.add('hidden');
+      document.getElementById('signupSection').classList.remove('hidden');
+    }
+
+    function showLanding() {
+      document.getElementById('landingSection').classList.remove('hidden');
+      document.getElementById('signupSection').classList.add('hidden');
+    }
+
+    // Role selection functionality
+    const refugeeBtn = document.getElementById('refugeeBtn');
+    const volunteerBtn = document.getElementById('volunteerBtn');
+    const refugeeForm = document.getElementById('refugeeForm');
+    const volunteerForm = document.getElementById('volunteerForm');
+
+    refugeeBtn.addEventListener('click', () => {
+      refugeeBtn.classList.add('active');
+      volunteerBtn.classList.remove('active');
+      refugeeForm.classList.remove('hidden');
+      volunteerForm.classList.add('hidden');
+    });
+
+    volunteerBtn.addEventListener('click', () => {
+      volunteerBtn.classList.add('active');
+      refugeeBtn.classList.remove('active');
+      volunteerForm.classList.remove('hidden');
+      refugeeForm.classList.add('hidden');
+    });
+
+    // Form submissions
+    refugeeForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="loading"></span>Processing...';
+
+      const formData = getFormData(e.target);
+      const errors = validateForm(formData, ['name', 'age', 'email', 'contact', 'password', 'address', 'needs']);
+      
+      if (errors.length > 0) {
+        showMessage('❌ Please fix the following errors: ' + errors.join(', '), 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+        return;
+      }
+
+      // Remove password from stored data for security
+      const { password, ...userDataToStore } = formData;
+      const userData = { ...userDataToStore, role: 'refugee' };
+      
+      setCurrentUser(userData);
+      showMessage('✅ Registration successful! You can now access relief camps...', 'success');
+      setTimeout(() => window.location.href = 'camps.html', 2000);
+    });
+
+    volunteerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="loading"></span>Processing...';
+
+      const formData = getFormData(e.target);
+      const errors = validateForm(formData, ['name', 'age', 'email', 'contact', 'password', 'skills', 'availability']);
+      
+      if (errors.length > 0) {
+        showMessage('❌ Please fix the following errors: ' + errors.join(', '), 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+        return;
+      }
+
+      if (parseInt(formData.age) < 18) {
+        showMessage('❌ Volunteers must be at least 18 years old.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+        return;
+      }
+
+      // Remove password from stored data for security
+      const { password, ...userDataToStore } = formData;
+      const userData = { ...userDataToStore, role: 'volunteer' };
+      
+      setCurrentUser(userData);
+      showMessage('✅ Volunteer application successful! Redirecting to dashboard...', 'success');
+      setTimeout(() => window.location.href = 'dashboard.html', 2000);
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', () => {
+      updateNavigation();
+    });
+  </script>
+</body>
+</html>
