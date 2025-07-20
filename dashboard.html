@@ -933,28 +933,6 @@
 
     // Initialize page
     document.addEventListener('DOMContentLoaded', async () => {
-      // Check for existing Supabase session
-      try {
-        const { data, error } = await auth.getCurrentUser();
-        if (data && data.profile) {
-          const userData = {
-            id: data.user.id,
-            email: data.profile.email,
-            name: data.profile.name,
-            role: data.profile.role,
-            contact: data.profile.contact,
-            address: data.profile.address,
-            needs: data.profile.needs,
-            skills: data.profile.skills,
-            availability: data.profile.availability
-          };
-          
-          setCurrentUser(userData);
-        }
-      } catch (error) {
-        console.error('Session check error:', error);
-      }
-      
       updateNavigation();
       
       if (!checkAccess()) {
@@ -1115,7 +1093,5 @@
         `).join('');
     }
 
-  </script>
-  <script type="module" src="/src/lib/supabase.js"></script>
 </body>
 </html>

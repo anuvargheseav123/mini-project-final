@@ -321,33 +321,16 @@
 
     // Check if user is already logged in
     document.addEventListener('DOMContentLoaded', async () => {
-      try {
-        const { data, error } = await auth.getCurrentUser();
-        if (data && data.profile) {
-          const userData = {
-            id: data.user.id,
-            email: data.profile.email,
-            name: data.profile.name,
-            role: data.profile.role,
-            contact: data.profile.contact,
-            address: data.profile.address,
-            needs: data.profile.needs,
-            skills: data.profile.skills,
-            availability: data.profile.availability
-          };
-          
-          setCurrentUser(userData);
-          showMessage(`Welcome back, ${userData.name}!`, 'success');
-          setTimeout(() => {
-            if (userData.role === 'volunteer') {
-              window.location.href = 'dashboard.html';
-            } else {
-              window.location.href = 'camps.html';
-            }
-          }, 1500);
-        }
-      } catch (error) {
-        console.error('Session check error:', error);
+      const currentUser = getCurrentUser();
+      if (currentUser) {
+        showMessage(`Welcome back, ${currentUser.name}!`, 'success');
+        setTimeout(() => {
+          if (currentUser.role === 'volunteer') {
+            window.location.href = 'dashboard.html';
+          } else {
+            window.location.href = 'camps.html';
+          }
+        }, 1500);
       }
     });
 
@@ -370,8 +353,6 @@
 
       try {
         const { data, error } = await auth.signIn(formData.email, formData.password);
-        
-        if (error) throw error;
         
         const userData = {
           id: data.user.id,
@@ -411,7 +392,5 @@
         loginBtn.textContent = 'Login';
       }
     });
-  </script>
-  <script type="module" src="/src/lib/supabase.js"></script>
 </body>
 </html>

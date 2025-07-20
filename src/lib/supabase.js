@@ -66,6 +66,13 @@ class MockSupabaseClient {
 
   // Auth methods
   async signUp(email, password, userData) {
+    // Check if user already exists
+    for (const [userId, user] of this.users.entries()) {
+      if (user.profile.email === email) {
+        throw new Error('User already exists with this email');
+      }
+    }
+
     const userId = this.generateId();
     const user = {
       id: userId,
@@ -108,10 +115,7 @@ class MockSupabaseClient {
       }
     }
 
-    return {
-      data: null,
-      error: { message: 'Invalid email or password' }
-    };
+    throw new Error('Invalid email or password');
   }
 
   async signOut() {
@@ -173,16 +177,12 @@ class MockSupabaseClient {
 
   async deleteCamp(campId) {
     if (!this.camps.has(campId)) {
-      return {
-        error: { message: 'Camp not found' }
-      };
+      throw new Error('Camp not found');
     }
 
     const camp = this.camps.get(campId);
     if (camp.type === 'default') {
-      return {
-        error: { message: 'Cannot delete default camps' }
-      };
+      throw new Error('Cannot delete default camps');
     }
 
     // Remove any selections for this camp
@@ -200,23 +200,17 @@ class MockSupabaseClient {
     // Check if user already has a selection
     for (const selection of this.campSelections.values()) {
       if (selection.user_id === userId) {
-        return {
-          error: { message: 'You already have a camp selected' }
-        };
+        throw new Error('You already have a camp selected');
       }
     }
 
     const camp = this.camps.get(campId);
     if (!camp) {
-      return {
-        error: { message: 'Camp not found' }
-      };
+      throw new Error('Camp not found');
     }
 
     if (camp.beds <= 0) {
-      return {
-        error: { message: 'No beds available in this camp' }
-      };
+      throw new Error('No beds available in this camp');
     }
 
     // Decrease bed count
@@ -254,9 +248,7 @@ class MockSupabaseClient {
     }
 
     if (!userSelection) {
-      return {
-        error: { message: 'No camp selection found' }
-      };
+      throw new Error('No camp selection found');
     }
 
     // Increase bed count back
