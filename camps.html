@@ -812,7 +812,7 @@
 
     function getCurrentUser() {
       try {
-        const userData = localStorage.getItem('currentUser');
+        const userData = sessionStorage.getItem('currentUser');
         return userData ? JSON.parse(userData) : null;
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -822,7 +822,7 @@
 
     function clearCurrentUser() {
       try {
-        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
         updateNavigation();
         return true;
       } catch (error) {
@@ -830,6 +830,9 @@
         return false;
       }
     }
+
+    // Import Supabase
+    import { auth, db, subscriptions } from './src/lib/supabase.js';
 
     function checkAccess() {
       const currentUser = getCurrentUser();
@@ -848,197 +851,86 @@
       }
     }
 
-    function initializeCamps() {
-      const existingCamps = localStorage.getItem('camps');
-      if (!existingCamps) {
-        // Initialize with default camps if none exist
-        const defaultCamps = [
-          {
-            id: 1,
-            name: "Central School Grounds",
-            beds: 24,
-            originalBeds: 24,
-            resources: ["Food", "Water", "Medical Aid", "Blankets"],
-            contact: "+91 98765 43210",
-            ambulance: "Yes",
-            type: "default"
-          },
-          {
-            id: 2,
-            name: "Community Hall",
-            beds: 12,
-            originalBeds: 12,
-            resources: ["Food", "Water", "Blankets", "Clothing"],
-            contact: "+91 98765 11223",
-            ambulance: "Nearby",
-            type: "default"
-          },
-          {
-            id: 3,
-            name: "Government High School",
-            beds: 30,
-            originalBeds: 30,
-            resources: ["Food", "Water", "First Aid", "Hygiene Kits"],
-            contact: "+91 98765 77889",
-            ambulance: "Yes",
-            type: "default"
-          }
-        ];
-        localStorage.setItem('camps', JSON.stringify(defaultCamps));
-      }
-    }
-
-    function getCamps() {
+    async function getCamps() {
       try {
-        initializeCamps();
-        const camps = localStorage.getItem('camps');
-        return camps ? JSON.parse(camps) : [];
+        const { data, error } = await db.getCamps();
+        if (error) throw error;
+        return data || [];
       } catch (error) {
         console.error('Error loading camps:', error);
         return [];
       }
     }
 
-    function saveCamps(camps) {
-      try {
-        localStorage.setItem('camps', JSON.stringify(camps));
-        return true;
-      } catch (error) {
-        console.error('Error saving camps:', error);
-        return false;
-      }
-    }
-
-    function getUserSelection() {
+    async function getUserSelection() {
       try {
         const currentUser = getCurrentUser();
         if (!currentUser) return null;
         
-        const selections = localStorage.getItem('campSelections');
-        const allSelections = selections ? JSON.parse(selections) : {};
-        return allSelections[currentUser.email] || null;
+        const { data, error } = await db.getUserCampSelection(currentUser.id);
+        if (error && error.code !== 'PGRST116') throw error; // Ignore "not found" errors
+        return data;
       } catch (error) {
         console.error('Error loading user selection:', error);
         return null;
       }
     }
 
-    function saveUserSelection(campId, campName) {
-      try {
-        const currentUser = getCurrentUser();
-        if (!currentUser) return false;
-        
-        const selections = localStorage.getItem('campSelections');
-        const allSelections = selections ? JSON.parse(selections) : {};
-        
-        allSelections[currentUser.email] = {
-          campId: campId,
-          campName: campName,
-          selectedDate: new Date().toISOString(),
-          userName: currentUser.name
-        };
-        
-        localStorage.setItem('campSelections', JSON.stringify(allSelections));
-        return true;
-      } catch (error) {
-        console.error('Error saving user selection:', error);
-        return false;
-      }
-    }
-
-    function clearUserSelection() {
-      try {
-        const currentUser = getCurrentUser();
-        if (!currentUser) return false;
-        
-        const selections = localStorage.getItem('campSelections');
-        const allSelections = selections ? JSON.parse(selections) : {};
-        
-        delete allSelections[currentUser.email];
-        localStorage.setItem('campSelections', JSON.stringify(allSelections));
-        return true;
-      } catch (error) {
-        console.error('Error clearing user selection:', error);
-        return false;
-      }
-    }
-
-    function selectCamp(campId) {
-      const camps = getCamps();
-      const camp = camps.find(c => c.id === campId);
+    async function selectCamp(campId) {
       const currentUser = getCurrentUser();
       
-      if (!camp || !currentUser) {
+      if (!currentUser) {
         showMessage('❌ Error selecting camp. Please try again.', 'error');
         return;
       }
 
       // Check if user already has a selection
-      const currentSelection = getUserSelection();
+      const currentSelection = await getUserSelection();
       if (currentSelection) {
         showMessage('⚠️ You already have a camp selected. Please cancel your current selection first.', 'warning');
         return;
       }
 
-      // Check if camp has available beds
-      if (camp.beds <= 0) {
-        showMessage('❌ This camp is full. Please select another camp.', 'error');
-        return;
-      }
-
-      // Decrease bed count
-      camp.beds -= 1;
-      
-      // Save updated camps
-      if (saveCamps(camps)) {
-        // Save user selection
-        if (saveUserSelection(campId, camp.name)) {
-          showMessage(`✅ Successfully selected "${camp.name}"! Your bed has been reserved.`, 'success');
-          renderCamps();
-          updateUserSelectionStatus();
-        } else {
-          // Rollback bed count if selection save failed
-          camp.beds += 1;
-          saveCamps(camps);
-          showMessage('❌ Failed to save your selection. Please try again.', 'error');
-        }
-      } else {
-        showMessage('❌ Failed to update camp information. Please try again.', 'error');
+      try {
+        const { data, error } = await db.selectCamp(currentUser.id, campId);
+        if (error) throw error;
+        
+        showMessage(`✅ Successfully selected camp! Your bed has been reserved.`, 'success');
+        await loadCamps();
+        await updateUserSelectionStatus();
+      } catch (error) {
+        console.error('Error selecting camp:', error);
+        showMessage('❌ Failed to select camp: ' + error.message, 'error');
       }
     }
 
-    function cancelSelection() {
-      const currentSelection = getUserSelection();
+    async function cancelSelection() {
+      const currentSelection = await getUserSelection();
       if (!currentSelection) {
         showMessage('❌ No camp selection found to cancel.', 'error');
         return;
       }
 
-      if (confirm(`Are you sure you want to cancel your selection for "${currentSelection.campName}"? This will free up your reserved bed.`)) {
-        const camps = getCamps();
-        const camp = camps.find(c => c.id === currentSelection.campId);
-        
-        if (camp) {
-          // Increase bed count back
-          camp.beds += 1;
-          saveCamps(camps);
-        }
-        
-        // Clear user selection
-        if (clearUserSelection()) {
-          showMessage(`✅ Successfully cancelled your selection for "${currentSelection.campName}".`, 'success');
-          renderCamps();
-          updateUserSelectionStatus();
-        } else {
-          showMessage('❌ Failed to cancel selection. Please try again.', 'error');
+      if (confirm(`Are you sure you want to cancel your selection for "${currentSelection.camp.name}"? This will free up your reserved bed.`)) {
+        try {
+          const currentUser = getCurrentUser();
+          const { error } = await db.cancelCampSelection(currentUser.id);
+          if (error) throw error;
+          
+          showMessage(`✅ Successfully cancelled your selection for "${currentSelection.camp.name}".`, 'success');
+          await loadCamps();
+          await updateUserSelectionStatus();
+        } catch (error) {
+          console.error('Error cancelling selection:', error);
+          showMessage('❌ Failed to cancel selection: ' + error.message, 'error');
         }
       }
     }
 
-    function updateUserSelectionStatus() {
+    async function updateUserSelectionStatus() {
       const statusEl = document.getElementById('userSelectionStatus');
       const selectionInfoEl = document.getElementById('selectionInfo');
-      const currentSelection = getUserSelection();
+      const currentSelection = await getUserSelection();
       
       if (!statusEl || !selectionInfoEl) return;
 
@@ -1046,9 +938,9 @@
         statusEl.classList.add('has-selection');
         selectionInfoEl.innerHTML = `
           <div class="selection-details">
-            <div class="camp-name">🏕️ ${currentSelection.campName}</div>
-            <p><strong>📅 Selected on:</strong> ${new Date(currentSelection.selectedDate).toLocaleDateString()}</p>
-            <p><strong>⏰ Time:</strong> ${new Date(currentSelection.selectedDate).toLocaleTimeString()}</p>
+            <div class="camp-name">🏕️ ${currentSelection.camp.name}</div>
+            <p><strong>📅 Selected on:</strong> ${new Date(currentSelection.selected_at).toLocaleDateString()}</p>
+            <p><strong>⏰ Time:</strong> ${new Date(currentSelection.selected_at).toLocaleTimeString()}</p>
             <p style="color: #10b981; font-weight: 600;">✅ Your bed is reserved at this camp</p>
           </div>
           <div>
@@ -1062,6 +954,140 @@
             <p>You haven't selected a camp yet. Browse the available camps below and select one that suits your needs.</p>
           </div>
         `;
+      }
+    }
+
+    async function renderCamps() {
+      try {
+        const camps = await getCamps();
+        const campsGrid = document.getElementById('campsGrid');
+        const currentSelection = await getUserSelection();
+        
+        if (!campsGrid) return;
+
+        if (camps.length === 0) {
+          campsGrid.innerHTML = `
+            <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: rgba(255, 255, 255, 0.9); border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.5);">
+              <h3 style="color: #64748b; margin-bottom: 1rem;">No camps available</h3>
+              <p style="color: #64748b;">Camps will appear here when volunteers add them through the dashboard.</p>
+            </div>
+          `;
+          return;
+        }
+
+        campsGrid.innerHTML = camps.map(camp => {
+          const healthTips = getHealthTips(camp.name);
+          const isVolunteerAdded = camp.type === 'volunteer-added';
+          const isSelected = currentSelection && currentSelection.camp_id === camp.id;
+          const hasNoBeds = camp.beds <= 0;
+          const isLowBeds = camp.beds > 0 && camp.beds <= 3;
+          
+          let campClasses = 'camp-card';
+          if (isSelected) campClasses += ' selected';
+          if (hasNoBeds) campClasses += ' no-beds';
+          if (isVolunteerAdded) campClasses += ' new-camp';
+          
+          let bedsDisplay = `${camp.beds} Available`;
+          let bedsClass = 'camp-info-value';
+          if (hasNoBeds) {
+            bedsDisplay = 'FULL';
+            bedsClass += ' beds-none';
+          } else if (isLowBeds) {
+            bedsClass += ' beds-low';
+          }
+          
+          return `
+            <div class="${campClasses}">
+              <h3>
+                🏕️ ${camp.name}
+                ${isVolunteerAdded ? '<span class="volunteer-added-badge">New</span>' : ''}
+                ${isSelected ? '<span class="selected-badge">Selected</span>' : ''}
+                ${hasNoBeds ? '<span class="full-badge">Full</span>' : ''}
+              </h3>
+              <div class="camp-info">
+                <div class="camp-info-item">
+                  <span class="camp-info-label">🛏️ Beds</span>
+                  <span class="${bedsClass}">${bedsDisplay}</span>
+                </div>
+                <div class="camp-info-item">
+                  <span class="camp-info-label">🍽️ Food</span>
+                  <span class="camp-info-value">${camp.resources.includes('Food') ? 'Available' : 'Limited'}</span>
+                </div>
+                <div class="camp-info-item">
+                  <span class="camp-info-label">🏥 Medical</span>
+                  <span class="camp-info-value">${camp.resources.includes('Medical Aid') ? 'First Aid' : 'Basic Care'}</span>
+                </div>
+                <div class="camp-info-item">
+                  <span class="camp-info-label">💧 Water</span>
+                  <span class="camp-info-value">${camp.resources.includes('Water') ? 'Clean water' : 'Available'}</span>
+                </div>
+              </div>
+              
+              ${!isSelected && !hasNoBeds && !currentSelection ? `
+                <div class="camp-actions">
+                  <button class="btn btn-primary" onclick="selectCamp('${camp.id}')">
+                    🏕️ Select This Camp
+                  </button>
+                </div>
+              ` : ''}
+              
+              ${isSelected ? `
+                <div class="camp-actions">
+                  <button class="btn btn-danger" onclick="cancelSelection()">
+                    🗑️ Cancel Selection
+                  </button>
+                </div>
+              ` : ''}
+              
+              ${hasNoBeds ? `
+                <div class="camp-actions">
+                  <button class="btn btn-primary" disabled>
+                    🚫 Camp Full
+                  </button>
+                </div>
+              ` : ''}
+              
+              ${currentSelection && !isSelected ? `
+                <div class="camp-actions">
+                  <button class="btn btn-primary" disabled>
+                    ⚠️ Already Selected Another Camp
+                  </button>
+                </div>
+              ` : ''}
+              
+              ${camp.contact ? `<div class="emergency-contact">Emergency Contact: ${camp.contact}</div>` : ''}
+              <div class="ambulance-info">Ambulance Available: ${camp.ambulance === 'Yes' ? 'Yes | Emergency: 102' : camp.ambulance === 'Nearby' ? 'Nearby hospital available' : 'Contact local emergency services'}</div>
+              <div class="awareness-tips">
+                <strong>Health Awareness Tips:</strong>
+                <ul>
+                  ${healthTips.map(tip => `<li>${tip}</li>`).join('')}
+                </ul>
+              </div>
+              ${isVolunteerAdded && camp.added_by_user ? `
+                <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; font-size: 0.9rem; color: #059669;">
+                  <strong>👤 Added by volunteer:</strong> ${camp.added_by_user.name}
+                  ${camp.created_at ? ` on ${new Date(camp.created_at).toLocaleDateString()}` : ''}
+                </div>
+              ` : ''}
+              ${camp.original_beds ? `
+                <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #64748b; text-align: center;">
+                  Original capacity: ${camp.original_beds} beds
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('Error rendering camps:', error);
+        showMessage('❌ Error loading camps. Please refresh the page.', 'error');
+      }
+    }
+
+    async function loadCamps() {
+      try {
+        await renderCamps();
+      } catch (error) {
+        console.error('Error loading camps:', error);
       }
     }
 
@@ -1087,134 +1113,6 @@
         ]
       };
       return tipVariations[campName] || defaultTips;
-    }
-
-    function renderCamps() {
-      const camps = getCamps();
-      const campsGrid = document.getElementById('campsGrid');
-      const currentSelection = getUserSelection();
-      
-      if (!campsGrid) return;
-
-      if (camps.length === 0) {
-        campsGrid.innerHTML = `
-          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: rgba(255, 255, 255, 0.9); border-radius: 16px; border: 1px solid rgba(226, 232, 240, 0.5);">
-            <h3 style="color: #64748b; margin-bottom: 1rem;">No camps available</h3>
-            <p style="color: #64748b;">Camps will appear here when volunteers add them through the dashboard.</p>
-          </div>
-        `;
-        return;
-      }
-
-      campsGrid.innerHTML = camps.map(camp => {
-        const healthTips = getHealthTips(camp.name);
-        const isVolunteerAdded = camp.type === 'volunteer-added';
-        const isSelected = currentSelection && currentSelection.campId === camp.id;
-        const hasNoBeds = camp.beds <= 0;
-        const isLowBeds = camp.beds > 0 && camp.beds <= 3;
-        
-        let campClasses = 'camp-card';
-        if (isSelected) campClasses += ' selected';
-        if (hasNoBeds) campClasses += ' no-beds';
-        if (isVolunteerAdded) campClasses += ' new-camp';
-        
-        let bedsDisplay = `${camp.beds} Available`;
-        let bedsClass = 'camp-info-value';
-        if (hasNoBeds) {
-          bedsDisplay = 'FULL';
-          bedsClass += ' beds-none';
-        } else if (isLowBeds) {
-          bedsClass += ' beds-low';
-        }
-        
-        return `
-          <div class="${campClasses}">
-            <h3>
-              🏕️ ${camp.name}
-              ${isVolunteerAdded ? '<span class="volunteer-added-badge">New</span>' : ''}
-              ${isSelected ? '<span class="selected-badge">Selected</span>' : ''}
-              ${hasNoBeds ? '<span class="full-badge">Full</span>' : ''}
-            </h3>
-            <div class="camp-info">
-              <div class="camp-info-item">
-                <span class="camp-info-label">🛏️ Beds</span>
-                <span class="${bedsClass}">${bedsDisplay}</span>
-              </div>
-              <div class="camp-info-item">
-                <span class="camp-info-label">🍽️ Food</span>
-                <span class="camp-info-value">${camp.resources.includes('Food') ? 'Available' : 'Limited'}</span>
-              </div>
-              <div class="camp-info-item">
-                <span class="camp-info-label">🏥 Medical</span>
-                <span class="camp-info-value">${camp.resources.includes('Medical Aid') ? 'First Aid' : 'Basic Care'}</span>
-              </div>
-              <div class="camp-info-item">
-                <span class="camp-info-label">💧 Water</span>
-                <span class="camp-info-value">${camp.resources.includes('Water') ? 'Clean water' : 'Available'}</span>
-              </div>
-            </div>
-            
-            ${!isSelected && !hasNoBeds && !currentSelection ? `
-              <div class="camp-actions">
-                <button class="btn btn-primary" onclick="selectCamp(${camp.id})">
-                  🏕️ Select This Camp
-                </button>
-              </div>
-            ` : ''}
-            
-            ${isSelected ? `
-              <div class="camp-actions">
-                <button class="btn btn-danger" onclick="cancelSelection()">
-                  🗑️ Cancel Selection
-                </button>
-              </div>
-            ` : ''}
-            
-            ${hasNoBeds ? `
-              <div class="camp-actions">
-                <button class="btn btn-primary" disabled>
-                  🚫 Camp Full
-                </button>
-              </div>
-            ` : ''}
-            
-            ${currentSelection && !isSelected ? `
-              <div class="camp-actions">
-                <button class="btn btn-primary" disabled>
-                  ⚠️ Already Selected Another Camp
-                </button>
-              </div>
-            ` : ''}
-            
-            ${camp.contact ? `<div class="emergency-contact">Emergency Contact: ${camp.contact}</div>` : ''}
-            <div class="ambulance-info">Ambulance Available: ${camp.ambulance === 'Yes' ? 'Yes | Emergency: 102' : camp.ambulance === 'Nearby' ? 'Nearby hospital available' : 'Contact local emergency services'}</div>
-            <div class="awareness-tips">
-              <strong>Health Awareness Tips:</strong>
-              <ul>
-                ${healthTips.map(tip => `<li>${tip}</li>`).join('')}
-              </ul>
-            </div>
-            ${isVolunteerAdded && camp.addedBy ? `
-              <div style="margin-top: 1rem; padding: 0.75rem; background: rgba(16, 185, 129, 0.1); border-radius: 8px; font-size: 0.9rem; color: #059669;">
-                <strong>👤 Added by volunteer:</strong> ${camp.addedBy}
-                ${camp.addedDate ? ` on ${new Date(camp.addedDate).toLocaleDateString()}` : ''}
-              </div>
-            ` : ''}
-            ${camp.originalBeds ? `
-              <div style="margin-top: 0.5rem; font-size: 0.9rem; color: #64748b; text-align: center;">
-                Original capacity: ${camp.originalBeds} beds
-              </div>
-            ` : ''}
-          </div>
-        `;
-      }).join('');
-
-      // Remove new-camp class after animation
-      setTimeout(() => {
-        document.querySelectorAll('.new-camp').forEach(card => {
-          card.classList.remove('new-camp');
-        });
-      }, 2000);
     }
 
     function updateNavigation() {
@@ -1260,30 +1158,32 @@
       }
     }
 
-    function logout() {
+    async function logout() {
       if (confirm('Are you sure you want to logout? This will also cancel any camp selections.')) {
-        // Cancel any camp selections before logout
-        const currentSelection = getUserSelection();
-        if (currentSelection) {
-          const camps = getCamps();
-          const camp = camps.find(c => c.id === currentSelection.campId);
-          if (camp) {
-            camp.beds += 1;
-            saveCamps(camps);
+        try {
+          // Cancel any camp selections before logout
+          const currentUser = getCurrentUser();
+          if (currentUser) {
+            await db.cancelCampSelection(currentUser.id);
           }
-          clearUserSelection();
+          
+          await auth.signOut();
+          clearCurrentUser();
+          showMessage('✅ Logged out successfully!', 'success');
+          setTimeout(() => window.location.href = 'index.html', 1500);
+        } catch (error) {
+          console.error('Logout error:', error);
+          clearCurrentUser();
+          showMessage('✅ Logged out successfully!', 'success');
+          setTimeout(() => window.location.href = 'index.html', 1500);
         }
-        
-        clearCurrentUser();
-        showMessage('✅ Logged out successfully!', 'success');
-        setTimeout(() => window.location.href = 'index.html', 1500);
       }
     }
 
-    function refreshCamps() {
+    async function refreshCamps() {
       showMessage('🔄 Camp information refreshed successfully!', 'success');
-      renderCamps();
-      updateUserSelectionStatus();
+      await loadCamps();
+      await updateUserSelectionStatus();
       
       // Simulate loading effect
       const refreshBtn = event.target;
@@ -1297,26 +1197,38 @@
       }, 2000);
     }
 
-    // Listen for storage changes from other tabs/windows
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'camps') {
-        renderCamps();
-        updateUserSelectionStatus();
-        showMessage('🔄 Camps updated! New changes from volunteers are now visible.', 'success');
-        console.log('🔄 Camps updated from dashboard');
-      }
-    });
-
     // Initialize page
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check for existing Supabase session
+      try {
+        const { data, error } = await auth.getCurrentUser();
+        if (data && data.profile) {
+          const userData = {
+            id: data.user.id,
+            email: data.profile.email,
+            name: data.profile.name,
+            role: data.profile.role,
+            contact: data.profile.contact,
+            address: data.profile.address,
+            needs: data.profile.needs,
+            skills: data.profile.skills,
+            availability: data.profile.availability
+          };
+          
+          setCurrentUser(userData);
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
+      }
+      
       updateNavigation();
       
       if (!checkAccess()) {
         return;
       }
 
-      renderCamps();
-      updateUserSelectionStatus();
+      await loadCamps();
+      await updateUserSelectionStatus();
       
       const currentUser = getCurrentUser();
       
@@ -1333,25 +1245,27 @@
           }, 3000);
         }
       }
+      
+      // Set up real-time subscriptions
+      subscriptions.subscribeToCamps(() => {
+        loadCamps();
+        showMessage('🔄 Camps updated! New changes from volunteers are now visible.', 'success');
+      });
+      
+      subscriptions.subscribeToCampSelections(() => {
+        updateUserSelectionStatus();
+      });
     });
 
-    // Auto-refresh camps every 30 seconds to catch updates
-    setInterval(() => {
-      if (getCurrentUser()) {
-        renderCamps();
-        updateUserSelectionStatus();
-        console.log('🔄 Auto-refreshing camp data...');
-      }
-    }, 30000);
-
     // Prevent page unload if user has a selection
-    window.addEventListener('beforeunload', (e) => {
-      const currentSelection = getUserSelection();
+    window.addEventListener('beforeunload', async (e) => {
+      const currentSelection = await getUserSelection();
       if (currentSelection) {
         e.preventDefault();
         e.returnValue = 'You have a camp selected. Are you sure you want to leave?';
       }
     });
   </script>
+  <script type="module" src="/src/lib/supabase.js"></script>
 </body>
 </html>

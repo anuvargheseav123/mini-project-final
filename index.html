@@ -942,7 +942,7 @@
 
     function setCurrentUser(userData) {
       try {
-        localStorage.setItem('currentUser', JSON.stringify(userData));
+        sessionStorage.setItem('currentUser', JSON.stringify(userData));
         updateNavigation();
         return true;
       } catch (error) {
@@ -953,7 +953,7 @@
 
     function getCurrentUser() {
       try {
-        const userData = localStorage.getItem('currentUser');
+        const userData = sessionStorage.getItem('currentUser');
         return userData ? JSON.parse(userData) : null;
       } catch (error) {
         console.error('Error loading user data:', error);
@@ -963,7 +963,7 @@
 
     function clearCurrentUser() {
       try {
-        localStorage.removeItem('currentUser');
+        sessionStorage.removeItem('currentUser');
         updateNavigation();
         return true;
       } catch (error) {
@@ -971,6 +971,9 @@
         return false;
       }
     }
+
+    // Import Supabase
+    import { auth } from './src/lib/supabase.js';
 
     function handleCampsAccess() {
       const currentUser = getCurrentUser();
@@ -1081,7 +1084,7 @@
     });
 
     // Form submissions
-    refugeeForm.addEventListener('submit', (e) => {
+    refugeeForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
@@ -1099,16 +1102,35 @@
         return;
       }
 
-      // Remove password from stored data for security
-      const { password, ...userDataToStore } = formData;
-      const userData = { ...userDataToStore, role: 'refugee' };
-      
-      setCurrentUser(userData);
-      showMessage('✅ Registration successful! You can now access relief camps...', 'success');
-      setTimeout(() => window.location.href = 'camps.html', 2000);
+      try {
+        const { data, error } = await auth.signUp(formData.email, formData.password, {
+          ...formData,
+          role: 'refugee'
+        });
+
+        if (error) throw error;
+
+        // Store user session
+        const userData = {
+          id: data.user.id,
+          email: formData.email,
+          name: formData.name,
+          role: 'refugee',
+          contact: formData.contact,
+          address: formData.address,
+          needs: formData.needs
+        };
+        
+        setCurrentUser(userData);
+        showMessage('✅ Registration successful! You can now access relief camps...', 'success');
+        setTimeout(() => window.location.href = 'camps.html', 2000);
+      } catch (error) {
+        console.error('Registration error:', error);
+        showMessage('❌ Registration failed: ' + error.message, 'error');
+      submitBtn.textContent = originalText;
     });
 
-    volunteerForm.addEventListener('submit', (e) => {
+    volunteerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const submitBtn = e.target.querySelector('button[type="submit"]');
       const originalText = submitBtn.textContent;
@@ -1133,19 +1155,59 @@
         return;
       }
 
-      // Remove password from stored data for security
-      const { password, ...userDataToStore } = formData;
-      const userData = { ...userDataToStore, role: 'volunteer' };
-      
-      setCurrentUser(userData);
-      showMessage('✅ Volunteer application successful! Redirecting to dashboard...', 'success');
-      setTimeout(() => window.location.href = 'dashboard.html', 2000);
+      try {
+        const { data, error } = await auth.signUp(formData.email, formData.password, {
+          ...formData,
+          role: 'volunteer'
+        });
+
+        if (error) throw error;
+
+        // Store user session
+        const userData = {
+          id: data.user.id,
+          email: formData.email,
+          name: formData.name,
+          role: 'volunteer',
+          contact: formData.contact,
+          skills: formData.skills,
+          availability: formData.availability
+        };
+        
+        setCurrentUser(userData);
+        showMessage('✅ Volunteer application successful! Redirecting to dashboard...', 'success');
+        setTimeout(() => window.location.href = 'dashboard.html', 2000);
+      } catch (error) {
+        console.error('Registration error:', error);
+        showMessage('❌ Registration failed: ' + error.message, 'error');
+      }
     });
 
     // Initialize page
-    document.addEventListener('DOMContentLoaded', () => {
+      submitBtn.textContent = originalText;
       updateNavigation();
     });
   </script>
+  <script type="module" src="/src/lib/supabase.js"></script>
 </body>
-</html>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Check for existing Supabase session
+      try {
+        const { data, error } = await auth.getCurrentUser();
+        if (data && data.profile) {
+          setCurrentUser({
+            id: data.user.id,
+            email: data.profile.email,
+            name: data.profile.name,
+            role: data.profile.role,
+            contact: data.profile.contact,
+            address: data.profile.address,
+            needs: data.profile.needs,
+            skills: data.profile.skills,
+            availability: data.profile.availability
+          });
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
+      }
+      
