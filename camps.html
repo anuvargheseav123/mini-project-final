@@ -1243,5 +1243,12 @@
         e.returnValue = 'You have a camp selected. Are you sure you want to leave?';
       }
     });
+  </script>
+  <script type="module">
+    import { auth, db, subscriptions } from './src/lib/supabase.js';
+    window.auth = auth;
+    window.db = db;
+    window.subscriptions = subscriptions;
+  </script>
 </body>
 </html>

@@ -392,5 +392,10 @@
         loginBtn.textContent = 'Login';
       }
     });
+  </script>
+  <script type="module">
+    import { auth } from './src/lib/supabase.js';
+    window.auth = auth;
+  </script>
 </body>
 </html>
